@@ -1,30 +1,14 @@
 import React, { Component } from 'react';
 import UserItem from './UserItem';
 import { connect } from 'react-redux';
-import { fetchUsers, fetchUsersNext } from './actions/user_actions';
 
 class UserList extends Component {
-	constructor() {
-		super();
-		this.state = {
-			page: 1
-		};
-	}
-	componentDidMount() {
-		this.props.fetchUsers();
-	}
-	loadMore = () => {
-		let newPage = this.state.page;
-		// //we have already fetched the information for the real next page and will just replace it. We need to know if there is available data on the page AFTER that.
-		newPage = newPage + 2;
-		this.props.fetchUsersNext(newPage);
-	};
 	render() {
+		const { users, onGetMoreUsers } = this.props;
 		return (
 			<div>
 				<ul>
-					{console.log(this.props.users.thisPage)}
-					{this.props.users.thisPage.map(user => (
+					{users.map(user => (
 						<UserItem
 							key={user.id}
 							id={user.id}
@@ -32,19 +16,22 @@ class UserList extends Component {
 						/>
 					))}
 				</ul>
-				{this.props.fullyLoaded ? null : (
-					<button onClick={this.loadMore}>Load More</button>
+				{console.log(this.props)}
+				{this.props.fullyLoaded ? (
+					<p>There are no more users to load!</p>
+				) : (
+					<button onClick={() => onGetMoreUsers()}>Get Users</button>
 				)}
 			</div>
 		);
 	}
 }
+
 function mapStateToProps(state) {
 	return {
-		users: state.user,
-		fullyLoaded: state.user.fullyLoaded
+		users: state.thisPage,
+		page: state.pageNumber,
+		fullyLoaded: state.fullyLoaded
 	};
 }
-export default connect(mapStateToProps, { fetchUsers, fetchUsersNext })(
-	UserList
-);
+export default connect(mapStateToProps, null)(UserList);

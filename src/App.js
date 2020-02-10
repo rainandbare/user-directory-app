@@ -1,27 +1,32 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-
-import './App.css';
+/*eslint-disable no-unused-vars */
+import React, { Component, useEffect } from 'react';
+import { Route } from 'react-router-dom';
 import UserList from './UserList';
 import SingleUser from './SingleUser';
+import Header from './Header';
 
-function App() {
-	return (
-		<Router>
+class App extends Component {
+	componentDidMount() {
+		this.props.onGetUsers();
+	}
+	render() {
+		return (
 			<div>
-				<nav>
-					<h1>List of Users</h1>
-					<ul>
-						<li>
-							<Link to='/'>All Users</Link>
-						</li>
-					</ul>
-				</nav>
-				<Route exact path='/' component={UserList} />
+				<Header />
+				<Route
+					exact
+					path='/'
+					render={() => (
+						<UserList
+							onGetMoreUsers={this.props.onGetMoreUsers}
+							onGetUsers={this.props.onGetUsers}
+						/>
+					)}
+				/>
 				<Route path='/user/:id' component={SingleUser} />
 			</div>
-		</Router>
-	);
+		);
+	}
 }
 
 export default App;
